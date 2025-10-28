@@ -3,7 +3,7 @@ version: '3.8'
 services:
   zerotier:
     build: .
-    image: zerotier
+#    image: zerotier
     container_name: zerotier
     ports:
       - "9993:9993/udp"
@@ -16,6 +16,7 @@ services:
       - SYS_ADMIN
     devices:
       - /dev/net/tun:/dev/net/tun
-
+    environment:
+      - ZT_NETWORK=${ZT_NETWORK}
 volumes:
   zerotier-data:
