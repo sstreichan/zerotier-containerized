@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  zerotier:
+    build: .
+    image: zerotier
+    container_name: zerotier
+    ports:
+      - "9993:9993/udp"
+    volumes:
+      - zerotier-data:/var/lib/zerotier-one
+    restart: unless-stopped
+    user: root
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+
+volumes:
+  zerotier-data:
