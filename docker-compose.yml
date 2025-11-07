@@ -1,22 +1,43 @@
 version: '3.8'
 
+# Cross-platform docker-compose configuration
+# Supports both ARM64 and AMD64 architectures
 services:
   zerotier:
-    build: .
-#    image: zerotier
-    container_name: zerotier
+    build:
+      context: .
+      platforms:
+        - linux/arm64
+        - linux/amd64
+      dockerfile: Dockerfile
+    image: zerotier-containerized:latest
+    container_name: zerotier-containerized
+    restart: unless-stopped
+    network_mode: host
+    privileged: true
     ports:
       - "9993:9993/udp"
     volumes:
       - zerotier-data:/var/lib/zerotier-one
-    restart: unless-stopped
-    user: root
+    environment:
+      - ZT_NETWORK=${ZT_NETWORK}
     cap_add:
       - NET_ADMIN
       - SYS_ADMIN
     devices:
       - /dev/net/tun:/dev/net/tun
-    environment:
-      - ZT_NETWORK=${ZT_NETWORK}
+    # Health check for monitoring container status
+    healthcheck:
+      test: ["CMD", "/usr/sbin/zerotier-one", "--version"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    # Labels for better identification
+    labels:
+      - "traefik.enable=false"
+      - "zerotier.role=container"
+
 volumes:
   zerotier-data:
+    driver: local

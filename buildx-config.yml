@@ -1,0 +1,25 @@
+# Docker Buildx configuration for cross-platform builds
+# Usage: docker buildx create --config buildx-config.yml --name multiarch --use
+#        docker buildx build --platform linux/arm64,linux/amd64 -t your-tag .
+
+# Buildx driver configuration
+driver: docker-container
+
+# Build configuration
+build:
+  platforms:
+    - linux/arm64
+    - linux/amd64
+  
+  cache:
+    type: registry
+    ref: zerotier-cache:latest
+    mode: min
+
+  output:
+    type: registry
+
+# Multi-platform builder settings
+# Note: This configuration supports cross-compilation
+# For emulation-based builds, ensure qemu-user-static is installed
+# Install with: docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
