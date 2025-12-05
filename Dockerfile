@@ -9,10 +9,6 @@ RUN apt-get update && apt-get install -y curl gnupg ca-certificates libssl3 buil
 # Install ZeroTier
 RUN curl -s https://install.zerotier.com/ | bash
 
-# Copy script AFTER installation so chmod succeeds
-COPY main.sh /var/lib/zerotier-one/main.sh
-RUN chmod 0755 /var/lib/zerotier-one/main.sh
-
 FROM debian:bookworm-slim
 
 LABEL description="Cross-platform Containerized ZeroTier One (ARM64/AMD64)"
@@ -32,7 +28,7 @@ RUN apt-get update && apt-get install -y libssl3 && rm -rf /var/lib/apt/lists/*
 COPY --from=builder /usr/sbin/zerotier-cli /usr/sbin/zerotier-cli
 COPY --from=builder /usr/sbin/zerotier-idtool /usr/sbin/zerotier-idtool
 COPY --from=builder /usr/sbin/zerotier-one /usr/sbin/zerotier-one
-COPY --from=builder /var/lib/zerotier-one/main.sh /main.sh
+COPY main.sh /main.sh
 
 # Copy SSL libraries - this works because we install libssl3 in final stage
 # The library paths will be automatically resolved by the system
@@ -41,6 +37,7 @@ COPY --from=builder /usr/lib/*/libcrypto.so.3 /usr/lib/*/libcrypto.so.3
 
 # Make scripts executable
 RUN chmod +x /main.sh /usr/sbin/zerotier-cli /usr/sbin/zerotier-idtool /usr/sbin/zerotier-one
+RUN sed -i 's/\r$//' /main.sh
 
 # Create ZeroTier data directory
 RUN mkdir -p /var/lib/zerotier-one
@@ -51,4 +48,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
 
 USER root:root
 
-ENTRYPOINT ["/main.sh"]
+ENTRYPOINT ["sh", "/main.sh"]
