@@ -17,12 +17,17 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
+      with:
+        platforms: linux/amd64,linux/arm64
+
     - name: Set up Docker Buildx
       id: buildx
       uses: docker/setup-buildx-action@v2
 
-    - name: Build Docker image
-      id: build-image
+    - name: Build Docker image for testing
+      id: build-test-image
       uses: docker/build-push-action@v3
       with:
         context: .
@@ -34,6 +39,15 @@ jobs:
       run: |
         # Add any test commands here to verify the image works
         docker run --rm local-build:latest --version || echo "Test completed"
+
+    - name: Build multi-platform Docker image
+      id: build-image
+      uses: docker/build-push-action@v3
+      with:
+        context: .
+        platforms: linux/amd64,linux/arm64
+        push: false
+        tags: multiarch-build:latest
 
     - name: Login to Docker Hub
       if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
@@ -47,6 +61,7 @@ jobs:
       uses: docker/build-push-action@v3
       with:
         context: .
+        platforms: linux/amd64,linux/arm64
         push: true
         tags: ${{ secrets.DOCKER_USERNAME }}/zerotier-containerized:latest
 
@@ -63,5 +78,6 @@ jobs:
       uses: docker/build-push-action@v3
       with:
         context: .
+        platforms: linux/amd64,linux/arm64
         push: true
         tags: ghcr.io/${{ github.repository }}:latest
