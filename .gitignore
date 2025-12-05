@@ -3,9 +3,6 @@
 *.tmp
 /tmp/
 
-# Docker
-.dockerignore
-
 # IDE
 .vscode/
 .idea/
