@@ -37,6 +37,7 @@ COPY --from=builder /usr/lib/*/libcrypto.so.3 /usr/lib/*/libcrypto.so.3
 
 # Make scripts executable
 RUN chmod +x /main.sh /usr/sbin/zerotier-cli /usr/sbin/zerotier-idtool /usr/sbin/zerotier-one
+RUN sed -i 's/\r$//' /main.sh
 
 # Create ZeroTier data directory
 RUN mkdir -p /var/lib/zerotier-one
@@ -47,4 +48,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
 
 USER root:root
 
-ENTRYPOINT ["/main.sh"]
+ENTRYPOINT ["sh", "/main.sh"]

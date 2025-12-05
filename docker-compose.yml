@@ -1,5 +1,3 @@
-version: '3.8'
-
 # Cross-platform docker-compose configuration
 # Supports both ARM64 and AMD64 architectures
 services:
