@@ -21,8 +21,9 @@ LABEL org.opencontainers.image.licenses="EPL-2.0"
 
 EXPOSE 9993/udp
 
-# Install libssl3 for runtime dependencies
-RUN apt-get update && apt-get install -y libssl3 && rm -rf /var/lib/apt/lists/*
+# Install runtime dependencies (bash needed for scripts, curl for API calls)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+  libssl3 bash curl ca-certificates && rm -rf /var/lib/apt/lists/*
 
 # Copy ZeroTier binaries
 COPY --from=builder /usr/sbin/zerotier-cli /usr/sbin/zerotier-cli
@@ -48,4 +49,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
 
 USER root:root
 
-ENTRYPOINT ["sh", "/main.sh"]
+ENTRYPOINT ["bash", "/main.sh"]

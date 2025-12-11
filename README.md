@@ -109,6 +109,13 @@ docker run -d \
 # Create environment file
 cat > .env << EOF
 ZT_NETWORK=your-network-id-here
+ZT_API_KEY=
+ZT_API_URL=https://my.zerotier.com/api
+ZT_MEMBER_NAME=
+ZT_MEMBER_DESCRIPTION=
+ZT_JOIN_TIMEOUT=30
+ZT_AUTHORIZE_TIMEOUT=30
+ZT_VERBOSE=0
 EOF
 
 # Start container
@@ -127,8 +134,14 @@ docker-compose down
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `ZT_NETWORK` | ZeroTier network ID to join | None |
-| `ZEROTIER_API_SECRET` | API secret for web interface | None |
+| `ZT_NETWORK` | ZeroTier network ID to join (16 hex chars) | None (REQUIRED) |
+| `ZT_API_KEY` | ZeroTier API token used to auto-authorize the device (32 chars) | None |
+| `ZT_API_URL` | ZeroTier controller API URL | `https://my.zerotier.com/api` |
+| `ZT_MEMBER_NAME` | Member short name (spaces replaced with dashes) | derived (hostname or zerotier id) |
+| `ZT_MEMBER_DESCRIPTION` | Member description for controller | empty |
+| `ZT_JOIN_TIMEOUT` | Seconds to wait for network join to appear | `30` |
+| `ZT_AUTHORIZE_TIMEOUT` | Seconds to wait for authorization to become active | `30` |
+| `ZT_VERBOSE` | Enable verbose logging when set to `1` | `0` |
 
 ### Network Configuration
 

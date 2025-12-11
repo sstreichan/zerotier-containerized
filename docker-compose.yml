@@ -19,6 +19,10 @@ services:
       - zerotier-data:/var/lib/zerotier-one
     environment:
       - ZT_NETWORK=${ZT_NETWORK}
+      - ZT_API_KEY=${ZT_API_KEY}
+      - ZT_API_URL=${ZT_API_URL}
+      - ZT_MEMBER_NAME=${ZT_MEMBER_NAME}
+      - ZT_MEMBER_DESCRIPTION=${ZT_MEMBER_DESCRIPTION}
     cap_add:
       - NET_ADMIN
       - SYS_ADMIN
