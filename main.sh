@@ -13,9 +13,15 @@ zerotier-one &
 sleep 2
 
 # Use environment variable ZT_NETWORK
+# If no networks are joined yet, attempt to join the one provided by ZT_NETWORK
 if ! zerotier-cli listnetworks | grep -q '[0-9a-f]\{16\}'; then
     if [ -z "$ZT_NETWORK" ]; then
         echo "No network configured. Set ZT_NETWORK env variable."
+        exit 1
+    fi
+    # Validate network id format (exactly 16 hex characters)
+    if ! echo "$ZT_NETWORK" | grep -Eiq '^[0-9a-f]{16}$'; then
+        echo "Invalid ZT_NETWORK value: must be 16 hex characters (example: 8a7f1c2e3d4b5a6f). Current: '$ZT_NETWORK'"
         exit 1
     fi
     zerotier-cli join "$ZT_NETWORK"
